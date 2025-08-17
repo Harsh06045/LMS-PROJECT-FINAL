@@ -1,5 +1,5 @@
 import React from 'react'
-import assets from '../../assets/assets'
+import { assets } from '../../assets/assets'
 import { Link, useLocation } from 'react-router-dom'
 
 const Navbar = () => {
@@ -14,9 +14,10 @@ const Navbar = () => {
           <button className='hover:text-gray-700 transition-colors'>
             Become Educator
           </button>
+          {/* Divider */}
           <Link 
             to='/my-enrollments' 
-            className='hover:text-gray-700 transition-colors'
+            className='hover:text-gray-700 transition-colors pl-4 ml-4 border-l border-gray-300'
           >
             My Enrollments
           </Link>

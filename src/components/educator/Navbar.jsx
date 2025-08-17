@@ -1,8 +1,28 @@
 import React from 'react'
+import { assets } from '../../assets/assets'
+import { Link } from 'react-router-dom'
 
 const Navbar = () => {
   return (
-    <div>Edu Navbar</div>
+    <div className='flex items-center justify-between px-4 sm:px-10 md:px-14 lg:px-36 border-b border-gray-500 py-4 bg-cyan-100/70'>
+      <img src={assets.logo} alt='Logo' className='w-28 lg:w-32 cursor-pointer' />
+      <div className='hidden md:flex items-center gap-5 text-gray-500'>
+        <div className='flex items-center gap-4'>
+          <button className='hover:text-gray-700 transition-colors'>
+            Become Educator
+          </button>
+          <Link
+            to='/my-enrollments'
+            className='hover:text-gray-700 transition-colors pl-4 ml-4 border-l border-gray-300'
+          >
+            My Enrollments
+          </Link>
+        </div>
+        <button className='bg-blue-600 text-white px-5 py-2 rounded-full hover:bg-blue-700 transition-colors'>
+          Create Account
+        </button>
+      </div>
+    </div>
   )
 }
 
