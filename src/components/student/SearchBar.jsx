@@ -10,8 +10,6 @@ const SearchBar = () => {
   const handleSubmit = (e) => {
     e.preventDefault()
     navigate('/course-list/' + input)
-   
-   
   }
 
   return (

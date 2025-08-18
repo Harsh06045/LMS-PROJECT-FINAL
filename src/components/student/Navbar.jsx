@@ -64,6 +64,7 @@ const Navbar = () => {
           > My Enrollments
           </Link>
           </> }
+          
         </div>
           {
             user ? <UserButton/> :  <button onClick={() => openSignIn()}> 
