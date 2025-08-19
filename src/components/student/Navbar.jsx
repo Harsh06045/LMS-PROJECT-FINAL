@@ -1,14 +1,17 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { assets } from '../../assets/assets'; // Update path if needed
-import { useClerk, UserButton, useUser } from '@clerk/clerk-react';
+import React, { useContext } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import { assets } from '../../assets/assets' // Update path if needed
+import { useClerk, UserButton,useUser } from '@clerk/clerk-react'
 
 const Navbar = () => {
-  const location = useLocation();
-  const isCourseListPage = location.pathname.includes('/course-list');
 
-  const { openSignIn } = useClerk();
-  const { user } = useUser();
+  const location = useLocation()
+  const isCourseListPage = location.pathname.includes('/course-list')
+
+  const{openSignIn} = useClerk()
+  const {user} = useUser()
+
+
 
   return (
     <div
@@ -18,7 +21,7 @@ const Navbar = () => {
     >
       {/* Logo and Brand */}
       <Link to="/" className="flex items-center">
-        <img
+        <img 
           src={assets.logo}
           alt="Logo"
           className="w-28 lg:w-32 cursor-pointer"
@@ -28,57 +31,57 @@ const Navbar = () => {
       {/* Desktop Nav */}
       <div className="hidden md:flex items-center gap-5 text-gray-500">
         <div className="flex items-center gap-5">
-          {user && (
-            <>
-              <button>
-                Become Educator
-              </button>
-              <Link to="/my-enrollments">
-                My Enrollments
-              </Link>
-            </>
-          )}
+  { user &&
+    <> 
+      <Link to="/educator">
+        <button>
+          Educator Dashboard
+        </button>
+      </Link>
+      <Link to="/my-enrollments">
+        My Enrollments
+      </Link>
+    </>
+  }
+
+           
         </div>
-        {user ? (
-          <UserButton />
-        ) : (
-          <button
-            onClick={() => openSignIn()}
-            className="bg-blue-600 text-white px-5 py-2 rounded-full hover:bg-blue-700 transition-colors"
-          >
+        { user ? <UserButton/> :
+        <button
+          onClick={() => openSignIn()}
+          className="bg-blue-600 text-white px-5 py-2 rounded-full hover:bg-blue-700 transition-colors">
             Create Account
-          </button>
-        )}
-      </div>
+            </button>}
+            </div>
 
       {/* Mobile Nav */}
       <div className="md:hidden flex items-center gap-2 sm:gap-5 text-gray-500">
         <div className="flex items-center gap-1 sm:gap-2 max-sm:text-xs">
-          {user && (
-            <>
-              <button>
-                Become Educator
-              </button>
-              <Link to="/my-enrollments">
-                My Enrollments
-              </Link>
-            </>
-          )}
+           { user &&
+          <>
+            <Link to="/educator">
+        <button>
+          Educator Dashboard
+        </button>
+      </Link>
+      <Link to="/my-enrollments">
+        My Enrollments
+      </Link>
+          </> }
+          
         </div>
-        {user ? (
-          <UserButton />
-        ) : (
-          <button onClick={() => openSignIn()}>
-            <img
-              src={assets.user_icon}
-              alt="User"
-              className="w-8 h-8 rounded-full"
-            />
+          {
+            user ? <UserButton/> :  <button onClick={() => openSignIn()}> 
+          <img
+            src={assets.user_icon}
+            alt="User"
+            className="w-8 h-8 rounded-full"
+          />  
           </button>
-        )}
-      </div>
+          }
+        </div>
     </div>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar
