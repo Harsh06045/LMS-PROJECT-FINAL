@@ -1,18 +1,14 @@
-import React from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { assets } from '../../assets/assets'
-import { useClerk, UserButton, useUser } from '@clerk/clerk-react'
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { assets } from '../../assets/assets'; // Update path if needed
+import { useClerk, UserButton, useUser } from '@clerk/clerk-react';
 
 const Navbar = () => {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const isCourseListPage = location.pathname.includes('/course-list')
-  const { openSignIn } = useClerk()
-  const { user } = useUser()
+  const location = useLocation();
+  const isCourseListPage = location.pathname.includes('/course-list');
 
-  const handleBecomeEducator = () => {
-    navigate('/educator/apply') // Change this path as needed
-  }
+  const { openSignIn } = useClerk();
+  const { user } = useUser();
 
   return (
     <div
@@ -32,18 +28,16 @@ const Navbar = () => {
       {/* Desktop Nav */}
       <div className="hidden md:flex items-center gap-5 text-gray-500">
         <div className="flex items-center gap-5">
-          <button
-            onClick={handleBecomeEducator}
-            className="hover:text-gray-700 transition-colors"
-          >
-            Become Educator
-          </button>
-          <Link
-            to="/my-enrollments"
-            className="hover:text-gray-700 transition-colors"
-          >
-            My Enrollments
-          </Link>
+          {user && (
+            <>
+              <button>
+                Become Educator
+              </button>
+              <Link to="/my-enrollments">
+                My Enrollments
+              </Link>
+            </>
+          )}
         </div>
         {user ? (
           <UserButton />
@@ -60,23 +54,21 @@ const Navbar = () => {
       {/* Mobile Nav */}
       <div className="md:hidden flex items-center gap-2 sm:gap-5 text-gray-500">
         <div className="flex items-center gap-1 sm:gap-2 max-sm:text-xs">
-          <button
-            onClick={handleBecomeEducator}
-            className="hover:text-gray-700 transition-colors"
-          >
-            Become Educator
-          </button>
-          <Link
-            to="/my-enrollments"
-            className="hover:text-gray-700 transition-colors"
-          >
-            My Enrollments
-          </Link>
+          {user && (
+            <>
+              <button>
+                Become Educator
+              </button>
+              <Link to="/my-enrollments">
+                My Enrollments
+              </Link>
+            </>
+          )}
         </div>
         {user ? (
           <UserButton />
         ) : (
-          <button aria-label="Open Sign In" onClick={() => openSignIn()}>
+          <button onClick={() => openSignIn()}>
             <img
               src={assets.user_icon}
               alt="User"
@@ -86,7 +78,7 @@ const Navbar = () => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;
