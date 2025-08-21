@@ -3,6 +3,9 @@ import Hero from '../../components/student/Hero'
 import SearchBar from '../../components/student/SearchBar'
 import Companies from '../../components/student/Companies'
 import CourseSection from '../../components/student/CourseSection'
+import TestimonialSection from '../../components/student/TestimonialSection'
+import CallToAction from '../../components/student/CallToAction'
+import Footer from '../../components/student/Footer'
 
 
 const Home = () => {
@@ -11,6 +14,9 @@ const Home = () => {
         <Hero/>
         <Companies/>
         <CourseSection/>
+        <TestimonialSection/>
+        <CallToAction/>
+        <Footer/>
     </div>
   )
 }
