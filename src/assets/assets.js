@@ -114,14 +114,14 @@ export const dummyTestimonial = [
         role: 'SWE 2 @ Samsung',
         image: assets.profile_img_2,
         rating: 4,
-        feedback: 'I\'ve been using Imagify for nearly two years, primarily for Instagram, and it has been incredibly user-friendly, making my work much easier.',
+        feedback: 'I’ve been depending on Imagify for image optimization on Instagram for close to a year. It consistently delivers great results while being incredibly easy to navigate.',
     },
     {
         name: 'James Washington',
         role: 'SWE 2 @ Google',
         image: assets.profile_img_3,
         rating: 4.5,
-        feedback: 'I\'ve been using Imagify for nearly two years, primarily for Instagram, and it has been incredibly user-friendly, making my work much easier.',
+        feedback: 'For the past couple of years, Imagify has made managing my Instagram visuals so much easier. It’s intuitive and reliable, helping me consistently deliver high-quality images without any stress.',
     },
 ];
 
