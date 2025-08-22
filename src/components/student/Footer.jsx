@@ -28,13 +28,22 @@ const Footer = () => {
               <h2 className='font-semibold text-white mb-5'>Subscribe to our newsletter</h2>
               <p className='text-sm text-white/80 '>The latest news, articles, and resources, sent to your inbox weekly.</p>
               <div>
-                <input type="email" placeholder='Enter your email' 
-                className='w-full md:w-80 px-4 py-2 rounded-md mt-3 text-sm' />
-                <button>Subscribe</button>
+                    <input
+                      type="email"
+                      placeholder="Enter your email"
+                      className="w-full md:w-80 px-4 py-2 rounded-md mt-3 text-sm"
+                    />
+                    <button
+                      className="mt-4"
+                      style={{ backgroundColor: 'white', color: 'black' }}
+                    >
+                      Subscribe
+                    </button>
               </div>
+
             </div>
           </div>
-          <p className='py-4 text-center text-xs md:text-sm text-white/60'>Copyright 2025 @GreatStack. All Right Reserved.</p>
+          <p className='py-4 text-center text-xs md:text-sm text-white/60'>Copyright 2025 @EduLearn Pro. All Right Reserved.</p>
         </footer>
     </div>
   )
