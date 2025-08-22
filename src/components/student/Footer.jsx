@@ -10,8 +10,10 @@ const Footer = () => {
             <div className='flex flex-col md:items-start items-center w-full'>
              
               <img src={assets.logo} alt="logo" className="w-24 md:w-28" />
-              <p className='mt-6 text-center md:text-left text-sm text-white/80 whitespace-nowrap'>Lorem Ipsum is simply dummy text of the printing 
-                and typesetting industry. Lorem Ispum has been the industry's standard dummy text.</p>
+              <p className='mt-6 text-center md:text-left text-sm text-white/80 '>Lorem Ipsum is simply dummy text of the 
+              printing  and typesetting industry. Lorem Ispum has been the industry's standard dummy text.</p>
+                
+               
                 
             </div>
             <div className='flex flex-col md:items-start items-center w-full'>
@@ -27,6 +29,7 @@ const Footer = () => {
             <div className='hidden md:flex flex-col md:items-start w-full'>
               <h2 className='font-semibold text-white mb-5'>Subscribe to our newsletter</h2>
               <p className='text-sm text-white/80 '>The latest news, articles, and resources, sent to your inbox weekly.</p>
+              
               <div>
                     <input
                       type="email"
@@ -37,7 +40,6 @@ const Footer = () => {
                       className="mt-4"
                       style={{ backgroundColor: 'white', color: 'black' }}
                     >
-                      Subscribe
                     </button>
               </div>
 
