@@ -85,7 +85,7 @@ const Footer = () => {
             <form onSubmit={handleSubscribe} className='w-full'>
               <input
                 type="email"
-                placeholder="Enter your email"
+                placeholder="Enter your email" 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full md:w-80 px-4 py-2 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
