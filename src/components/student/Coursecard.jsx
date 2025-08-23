@@ -43,7 +43,9 @@ const Coursecard = ({ course }) => {
       <img className="w-full" src={course.courseThumbnail} alt="" />
       <div className="p-3 text-left">
         <h3 className="text-base font-semibold text-gray-800 dark:text-white">{course.courseTitle}</h3>
-        <p className="text-gray-500 dark:text-gray-400">{course.educator.name}</p>
+        
+        {/* Hard-coded instructor name */}
+        <p className="text-gray-500 dark:text-gray-400">GreatStack</p>
         
         <div className="flex items-center space-x-2">
           <p className="font-semibold text-yellow-600">{rating.toFixed(1)}</p>
