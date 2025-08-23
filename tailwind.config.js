@@ -17,11 +17,7 @@ module.exports = {
         'auto' : 'repeat(auto-fit, minmax(200px, 1fr))',
       },
       spacing: {
-<<<<<<< Updated upstream
         'section-height' : '500px',
-=======
-        'sectionheight' : '500px',
->>>>>>> Stashed changes
       }
     },
   },

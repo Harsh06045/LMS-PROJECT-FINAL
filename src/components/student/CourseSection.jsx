@@ -46,7 +46,9 @@ const CourseSection = () => {
           ? allCourses.slice(0, 4).map((course, index) => (
               <Coursecard key={index} course={course} />  
             ))
-          : <p className='text-gray-600'>No courses available.</p>
+          : <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              No courses available.
+            </p>
         }
       </div>
 
@@ -54,7 +56,11 @@ const CourseSection = () => {
       <Link
         to={'/course-list'}
         onClick={() => window.scrollTo(0, 0)}
-        className='text-gray-500 border border-gray-500/30 px-10 py-3 rounded hover:bg-gray-100 transition-colors duration-300'
+        className={`px-10 py-3 rounded transition-colors duration-300 ${
+          isDarkMode 
+            ? 'text-gray-300 border border-gray-600 hover:bg-gray-800' 
+            : 'text-gray-500 border border-gray-500/30 hover:bg-gray-100'
+        }`}
       >
         Show all courses
       </Link>

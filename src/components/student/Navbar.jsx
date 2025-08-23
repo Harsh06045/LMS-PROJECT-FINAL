@@ -1,121 +1,159 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { AppContext } from '../../context/AppContext'
-import SearchBar from '../../components/student/SearchBar'
-import { useParams } from 'react-router-dom'
-import Coursecard from '../../components/student/Coursecard'
-import { assets } from '../../assets/assets' 
+import { Link, useLocation } from 'react-router-dom'
+import { assets } from '../../assets/assets'
+import { useClerk, UserButton, useUser } from '@clerk/clerk-react'
 
-const CoursesList = () => {
-  const {navigate, allCourses} = useContext(AppContext)
-  const {input} = useParams()
+const Navbar = () => {
+  const location = useLocation()
+  const isCourseListPage = location.pathname.includes('/course-list')
   
-  // Sync with Navbar's localStorage dark mode
+  const { openSignIn } = useClerk()
+  const { user } = useUser()
+  
+  // Theme toggle state
   const [isDarkMode, setIsDarkMode] = useState(false)
 
-  // Load theme from localStorage on mount (same as your Navbar)
+  // Load theme from localStorage on mount
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme')
     if (savedTheme === 'dark') {
       setIsDarkMode(true)
+      document.documentElement.classList.add('dark')
     }
   }, [])
 
-  // Listen for theme changes from Navbar
-  useEffect(() => {
-    const handleThemeChange = () => {
-      const savedTheme = localStorage.getItem('theme')
-      setIsDarkMode(savedTheme === 'dark')
+  // Toggle theme function
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode)
+    if (!isDarkMode) {
+      document.documentElement.classList.add('dark')
+      localStorage.setItem('theme', 'dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+      localStorage.setItem('theme', 'light')
     }
+  }
 
-    // Poll for changes every 100ms to stay in sync with Navbar
-    const interval = setInterval(handleThemeChange, 100)
-    
-    return () => clearInterval(interval)
-  }, [])
-  
-  // Enhanced filtering logic with more comprehensive search
-  const displayCourses = input && input.trim() !== '' 
-    ? allCourses?.filter(course => {
-        const searchText = input.toLowerCase().trim()
-        
-        // Check all possible course properties
-        return (
-          course.title?.toLowerCase().includes(searchText) ||
-          course.name?.toLowerCase().includes(searchText) ||
-          course.courseName?.toLowerCase().includes(searchText) ||
-          course.course_name?.toLowerCase().includes(searchText) ||
-          course.description?.toLowerCase().includes(searchText) ||
-          course.category?.toLowerCase().includes(searchText) ||
-          course.subject?.toLowerCase().includes(searchText) ||
-          course.instructor?.toLowerCase().includes(searchText) ||
-          course.teacher?.toLowerCase().includes(searchText) ||
-          // Check if any string value in the course object contains the search term
-          Object.values(course).some(value => 
-            typeof value === 'string' && 
-            value.toLowerCase().includes(searchText)
-          )
-        )
-      }) || []
-    : allCourses || []
+  // Light mode icon (Sun)
+  const SunIcon = () => (
+    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+      <circle cx="10" cy="10" r="4" />
+      <path d="M10 0v4M10 16v4M4.22 4.22l2.83 2.83M12.95 12.95l2.83 2.83M0 10h4M16 10h4M4.22 15.78l2.83-2.83M12.95 7.05l2.83-2.83" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  )
+
+  // Dark mode icon (Moon)
+  const MoonIcon = () => (
+    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+      <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+    </svg>
+  )
 
   return (
-    <>
-      <div className={`relative md:px-36 px-8 pt-20 text-left min-h-screen transition-colors duration-300 ${
-        isDarkMode ? 'bg-gray-900' : 'bg-white'
-      }`}>
-        <div className='flex md:flex-row flex-col gap-6 items-start justify-between w-full'>
-          <div>
-            <h1 className={`text-4xl font-semibold transition-colors duration-300 ${
-              isDarkMode ? 'text-white' : 'text-gray-800'
-            }`}>
-              Course List
-            </h1>
-            <p className={`transition-colors duration-300 ${
-              isDarkMode ? 'text-gray-400' : 'text-gray-500'
-            }`}>
-              <span className={`cursor-pointer transition-colors duration-300 ${
-                isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'
-              }`} onClick={()=> navigate('/')}>
-                Home
-              </span> / <span>Course List</span>
-            </p>
-          </div>
-          <SearchBar data={input} />
+    <div
+      className={`flex items-center justify-between px-4 sm:px-10 md:px-14 lg:px-36 border-b border-gray-500 py-4 transition-colors duration-300 ${
+        isCourseListPage 
+          ? (isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-white') 
+          : (isDarkMode ? 'bg-gray-800' : 'bg-cyan-100/70')
+      }`}
+    >
+      {/* Logo and Brand */}
+      <Link to="/" className="flex items-center">
+        <img 
+          src={assets.logo}
+          alt="Logo"
+          className="w-28 lg:w-32 cursor-pointer"
+        />
+      </Link>
+
+      {/* Desktop Nav */}
+      <div className={`hidden md:flex items-center gap-5 ${isDarkMode ? 'text-gray-300' : 'text-gray-500'}`}>
+        <div className="flex items-center gap-5">
+          {user && (
+            <> 
+              <Link to="/educator">
+                <button className={`hover:${isDarkMode ? 'text-white' : 'text-gray-700'} transition-colors`}>
+                  Educator Dashboard
+                </button>
+              </Link>
+              <Link to="/my-enrollments" className={`hover:${isDarkMode ? 'text-white' : 'text-gray-700'} transition-colors`}>
+                My Enrollments
+              </Link>
+            </>
+          )}
+          
+          {/* Theme Toggle Button */}
+          <button
+            onClick={toggleTheme}
+            className={`p-2 rounded-lg transition-all duration-300 hover:bg-opacity-80 ${
+              isDarkMode 
+                ? 'text-yellow-400 hover:bg-gray-700' 
+                : 'text-gray-600 hover:bg-gray-100'
+            }`}
+            title={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {isDarkMode ? <SunIcon /> : <MoonIcon />}
+          </button>
         </div>
         
-        {input && (
-          <div className={`inline-flex items-center gap-4 px-4 py-2 border rounded-lg mt-4 transition-colors duration-300 ${
-            isDarkMode 
-              ? 'border-gray-600 bg-gray-800 text-gray-300' 
-              : 'border-gray-300 bg-gray-50 text-gray-600'
-          }`}>
-            <p>{input}</p>
-            <img 
-              src={assets.cross_icon} 
-              alt="" 
-              className={`cursor-pointer w-4 h-4 transition-opacity duration-200 hover:opacity-70 ${
-                isDarkMode ? 'filter invert' : ''
-              }`}
-              onClick={() => navigate('/course-list')}
-            />
-          </div>
+        {user ? (
+          <UserButton />
+        ) : (
+          <button
+            onClick={() => openSignIn()}
+            className="bg-blue-600 text-white px-5 py-2 rounded-full hover:bg-blue-700 transition-colors"
+          >
+            Create Account
+          </button>
         )}
-
-        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 my-16 gap-3 px-2 md:p-0'>
-          {displayCourses && displayCourses.length > 0
-          ? displayCourses.map((course, index) => (
-            <Coursecard key={index} course={course} />  
-          ))
-          : <p className={`mt-4 transition-colors duration-300 ${
-              isDarkMode ? 'text-gray-400' : 'text-gray-500'
-            }`}>
-              {input ? `No courses found for "${input}"` : 'No courses available.'}
-            </p>
-        }
-        </div>
       </div>
-    </>
+
+      {/* Mobile Nav */}
+      <div className={`md:hidden flex items-center gap-2 sm:gap-5 ${isDarkMode ? 'text-gray-300' : 'text-gray-500'}`}>
+        <div className="flex items-center gap-1 sm:gap-2 max-sm:text-xs">
+          {user && (
+            <>
+              <Link to="/educator">
+                <button className={`hover:${isDarkMode ? 'text-white' : 'text-gray-700'} transition-colors text-xs`}>
+                  Dashboard
+                </button>
+              </Link>
+              <Link to="/my-enrollments" className={`hover:${isDarkMode ? 'text-white' : 'text-gray-700'} transition-colors text-xs`}>
+                Enrollments
+              </Link>
+            </>
+          )}
+        </div>
+        
+        {/* Mobile Theme Toggle */}
+        <button
+          onClick={toggleTheme}
+          className={`p-1.5 rounded-lg transition-all duration-300 hover:bg-opacity-80 ${
+            isDarkMode 
+              ? 'text-yellow-400 hover:bg-gray-700' 
+              : 'text-gray-600 hover:bg-gray-100'
+          }`}
+          title={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+        >
+          <div className="w-4 h-4">
+            {isDarkMode ? <SunIcon /> : <MoonIcon />}
+          </div>
+        </button>
+        
+        {user ? (
+          <UserButton />
+        ) : (
+          <button onClick={() => openSignIn()}> 
+            <img
+              src={assets.user_icon}
+              alt="User"
+              className="w-8 h-8 rounded-full"
+            />  
+          </button>
+        )}
+      </div>
+    </div>
   )
 }
 
-export default CoursesList
+export default Navbar
