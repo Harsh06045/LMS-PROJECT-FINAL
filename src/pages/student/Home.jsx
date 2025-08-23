@@ -35,17 +35,40 @@ const Home = () => {
   }, [])
 
   return (
-    <div className={`flex flex-col items-center space-y-7 text-center transition-colors duration-300 ${
+    <div className={`transition-colors duration-300 ${
       isDarkMode 
         ? 'bg-gray-900 text-white' 
         : 'bg-white text-gray-900'
     }`}>
-      <Hero />
-      <Companies />
-      <CourseSection />
-      <TestimonialSection />
-      <CallToAction />
-      <Footer />
+      {/* Hero Section */}
+      <section className="flex flex-col items-center text-center py-8">
+        <Hero />
+      </section>
+
+      {/* Companies Section */}
+      <section className="flex flex-col items-center text-center py-8">
+        <Companies />
+      </section>
+
+      {/* Course Section */}
+      <section className="flex flex-col items-center text-center py-12">
+        <CourseSection />
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="flex flex-col items-center text-center py-12">
+        <TestimonialSection />
+      </section>
+
+      {/* Call to Action Section */}
+      <section className="flex flex-col items-center text-center py-8">
+        <CallToAction />
+      </section>
+
+      {/* Footer Section */}
+      <footer>
+        <Footer />
+      </footer>
     </div>
   )
 }
