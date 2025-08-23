@@ -39,4 +39,4 @@ const CourseDetails = () => {
   ) : <Loading />
 }
 
-export default CourseDetail
+export default CourseDetails
