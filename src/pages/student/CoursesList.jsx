@@ -3,6 +3,7 @@ import { AppContext } from '../../context/AppContext'
 import SearchBar from '../../components/student/SearchBar'
 import { useParams } from 'react-router-dom'
 import Coursecard from '../../components/student/Coursecard'
+import Footer from '../../components/student/Footer'
 
 const CoursesList = () => {
   const {navigate, allCourses} = useContext(AppContext)
@@ -55,7 +56,9 @@ const CoursesList = () => {
         }
         </div>
       </div>
+      <Footer/>
     </>
+    
   )
 }
 
