@@ -1,11 +1,42 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { AppContext } from '../../context/AppContext'
+import Loading from '../../components/student/Loading'
 
 const CourseDetails = () => {
-  return (
-    <div>
-        <h1>Course Details page</h1>
+  const { id } = useParams()
+  const [courseData, setCourseData] = useState(null)
+  const { allCourses } = useContext(AppContext)
+
+  const fetchCourseData = () => {
+    if (!allCourses || allCourses.length === 0) return;
+    const findCourse = allCourses.find(course => course._id === id)
+    setCourseData(findCourse)
+  }
+
+  useEffect(() => {
+    fetchCourseData()
+  }, [id, allCourses])
+
+  return courseData ? (
+    <div className='flex md:flex-row flex-col-reverse gap-10 relative items-start justify-between md:px-36 
+      px-8 md:pt-30 pt-20 text-left'>
+      
+      <div className='absolute top-0 left-0 w-full h-section-height -z-1 bg-gradient-to-b from-cyan-100/70'></div>
+
+      <div className='max-w-xl x-10 text-gray-500'>
+        <h1 className='md:text-course-details-heading-large text-course-details-heading-small
+        font-semibold text-gray-800'>{courseData.courseTitle}</h1>
+        <p>
+          {courseData.courseDescription
+            .replace(/<[^>]*>/g, '')  // remove HTML tags
+            .slice(0, 188)}
+        </p>
+      </div>
+
+      <div></div>
     </div>
-  )
+  ) : <Loading />
 }
 
 export default CourseDetails
