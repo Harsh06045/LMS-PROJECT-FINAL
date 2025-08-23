@@ -32,14 +32,14 @@ const CoursesList = () => {
     : allCourses || []
 
   return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-[#181e29] transition-colors duration-300">
+    <div className="min-h-screen flex flex-col bg-white transition-colors duration-300">
       <div className="flex-1 md:px-36 px-8 pt-20 text-left">
         <div className="flex md:flex-row flex-col gap-6 items-start justify-between w-full">
           <div>
-            <h1 className="text-4xl font-semibold text-gray-900 dark:text-white">
+            <h1 className="text-4xl font-semibold text-gray-900">
               Course List
             </h1>
-            <p className="text-gray-500 dark:text-gray-400">
+            <p className="text-gray-500">
               <span
                 className="text-blue-600 cursor-pointer hover:underline"
                 onClick={() => navigate('/')}
@@ -59,7 +59,7 @@ const CoursesList = () => {
               <Coursecard key={index} course={course} />
             ))
           ) : (
-            <p className="text-gray-500 dark:text-gray-400 mt-4">
+            <p className="text-gray-500 mt-4">
               {input 
                 ? `No courses found for "${input}"`
                 : 'No courses available.'}

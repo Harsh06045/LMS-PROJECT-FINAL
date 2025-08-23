@@ -8,36 +8,68 @@ const CourseDetails = () => {
   const [courseData, setCourseData] = useState(null)
   const { allCourses } = useContext(AppContext)
 
-  const fetchCourseData = () => {
+  useEffect(() => {
     if (!allCourses || allCourses.length === 0) return
     const findCourse = allCourses.find(course => course._id === id)
-    setCourseData(findCourse)
-  }
-
-  useEffect(() => {
-    fetchCourseData()
+    setCourseData(findCourse || null)
   }, [id, allCourses])
 
-  return courseData ? (
-    <div className="flex flex-col md:flex-row gap-10 relative items-start justify-between md:px-36 px-8 md:pt-30 pt-20 text-left transition-colors duration-300
-      bg-white dark:bg-[#181e29] text-gray-900 dark:text-gray-100 min-h-screen">
-      
-      <div className="absolute top-0 left-0 w-full h-section-height -z-1 bg-gradient-to-b from-cyan-100/70 dark:from-cyan-600/50"></div>
+  if (!courseData) return <Loading />
 
-      <div className="max-w-xl x-10">
-        <h1 className="md:text-course-details-heading-large text-course-details-heading-small font-semibold text-gray-800 dark:text-white">
-          {courseData.courseTitle}
-        </h1>
-        <p className="pt-4 md:text-base text-sm text-gray-700 dark:text-gray-300">
-          {courseData.courseDescription
-            .replace(/<[^>]*>/g, '')  // remove HTML tags
-            .slice(0, 188)}
-        </p>
+  return (
+    <>
+      {/* Local keyframes (you can move these to a global CSS if preferred) */}
+      <style>
+        {`
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(12px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes shine {
+          0%   { transform: translateX(-120%); opacity: 0; }
+          25%  { opacity: 1; }
+          100% { transform: translateX(120%); opacity: 0; }
+        }
+        `}
+      </style>
+
+      <div className="flex flex-col md:flex-row gap-10 relative items-start justify-between md:px-36 px-8 md:pt-30 pt-20 text-left bg-white text-black min-h-screen">
+        <div className="absolute top-0 left-0 w-full h-section-height -z-1 bg-gradient-to-b from-cyan-100/70"></div>
+
+        <div className="max-w-xl x-10">
+          {/* Title: darker text + subtle shine + fade/slide-in */}
+          <h1
+            className="
+              relative inline-block
+              md:text-course-details-heading-large
+              text-course-details-heading-small
+              font-semibold text-[black] [--tw-text-opacity:1]
+              opacity-0 translate-y-3
+              animate-[fadeUp_500ms_ease-out_100ms_forwards]
+              after:content-[''] after:absolute after:inset-0
+              after:bg-[linear-gradient(110deg,transparent,rgba(255,255,255,0.8),transparent)]
+              after:-translate-x-full after:animate-[shine_900ms_ease-out_300ms_forwards]
+            "
+          >
+            {courseData.courseTitle}
+          </h1>
+
+          {/* Paragraph: darker text + delayed fade/slide-in */}
+          <p
+            className="
+              pt-4 md:text-base text-sm text-[black] [--tw-text-opacity:1]
+              opacity-0 translate-y-3
+              animate-[fadeUp_600ms_ease-out_250ms_forwards]
+            "
+          >
+            {courseData.courseDescription.replace(/<[^>]*>/g, '').slice(0, 188)}
+          </p>
+        </div>
+
+        <div></div>
       </div>
-
-      <div></div>
-    </div>
-  ) : <Loading />
+    </>
+  )
 }
 
 export default CourseDetails
