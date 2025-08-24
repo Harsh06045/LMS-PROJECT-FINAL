@@ -4,13 +4,15 @@ import { AppContext } from "../../context/AppContext";
 import Loading from "../../components/student/Loading";
 import { assets } from "../../assets/assets";
 import humanizeDuration from "humanize-duration";
+import Footer from "../../components/student/Footer";
+import Youtube from "react-youtube";
 
 const CourseDetails = () => {
   const { id } = useParams();
   const [courseData, setCourseData] = useState(null);
   const [openSections, setOpenSections] = useState({});
   const [isAlreadyEnrolled, setIsAlreadyEnrolled] = useState(false);
-  
+  const [playerData, setPlayerData] = useState(null);
 
   const {
     allCourses,
@@ -90,23 +92,22 @@ const CourseDetails = () => {
       </style>
       <div className="flex flex-col md:flex-row gap-10 relative items-start justify-between md:px-36 px-8 md:pt-30 pt-20 text-left bg-white text-black min-h-screen">
         <div className="absolute top-0 left-0 w-full h-section-height -z-1 bg-gradient-to-b from-cyan-100/70"></div>
+
+        {/* LEFT COLUMN */}
         <div className="max-w-xl x-10">
           <h1
             className="
-            relative inline-block md:text-course-details-heading-large text-course-details-heading-small font-semibold text-[black] [--tw-text-opacity:1]
-            opacity-0 translate-y-3 animate-[fadeUp_500ms_ease-out_100ms_forwards]
-            after:content-[''] after:absolute after:inset-0
-            after:bg-[linear-gradient(110deg,transparent,rgba(255,255,255,0.8),transparent)]
-            after:-translate-x-full after:animate-[shine_900ms_ease-out_300ms_forwards]
-          "
+              relative inline-block md:text-course-details-heading-large text-course-details-heading-small font-semibold text-[black]
+              opacity-0 translate-y-3 animate-[fadeUp_500ms_ease-out_100ms_forwards]
+              after:content-[''] after:absolute after:inset-0
+              after:bg-[linear-gradient(110deg,transparent,rgba(255,255,255,0.8),transparent)]
+              after:-translate-x-full after:animate-[shine_900ms_ease-out_300ms_forwards]"
           >
             {courseData.courseTitle}
           </h1>
           <p
-            className="
-            pt-4 md:text-base text-sm text-[black] [--tw-text-opacity:1]
-            opacity-0 translate-y-3 animate-[fadeUp_600ms_ease-out_250ms_forwards]
-          "
+            className="pt-4 md:text-base text-sm text-[black] 
+              opacity-0 translate-y-3 animate-[fadeUp_600ms_ease-out_250ms_forwards]"
           >
             {courseDescription.replace(/<[^>]*>/g, "").slice(0, 188)}
           </p>
@@ -162,6 +163,7 @@ const CourseDetails = () => {
             <span className="text-blue-600 underline">EduLearn Pro</span>
           </p>
 
+          {/* Course structure */}
           <div className="pt-8 text-gray-800">
             <h2 className="text-xl font-semibold">Course Structure</h2>
             <div className="pt-5">
@@ -192,7 +194,7 @@ const CourseDetails = () => {
                     </p>
                   </div>
 
-                  {/* Toggle content */}
+                  {/* Expanded lectures */}
                   <div
                     className={`overflow-hidden transition-all duration-300 ease-in-out ${
                       openSections[index]
@@ -215,7 +217,14 @@ const CourseDetails = () => {
                             <p className="flex-1">{lecture.lectureTitle}</p>
                             <div className="flex gap-3 items-center flex-shrink-0 ml-2">
                               {lecture.isPreviewFree && (
-                                <p className="text-blue-500 cursor-pointer hover:text-blue-600 transition-colors">
+                                <p
+                                  onClick={() =>
+                                    setPlayerData({
+                                      videoId: lecture.lectureUrl.split("/").pop(),
+                                    })
+                                  }
+                                  className="text-blue-500 cursor-pointer hover:text-blue-600 transition-colors"
+                                >
                                   Preview
                                 </p>
                               )}
@@ -236,6 +245,7 @@ const CourseDetails = () => {
             </div>
           </div>
 
+          {/* Description / Learn / Requirements */}
           <div className="py-20 text-sm md:text-base">
             <h3 className="text-xl font-semibold mb-6 text-gray-900">
               Course Description
@@ -248,98 +258,75 @@ const CourseDetails = () => {
               </div>
             </div>
 
-            {/* What you'll learn section */}
+            {/* What you'll learn */}
             <div className="mt-8">
               <h4 className="text-lg font-semibold mb-4 text-gray-900">
                 What you'll learn
               </h4>
               <div className="grid md:grid-cols-2 gap-3">
-                <div className="flex items-start gap-2">
-                  <img
-                    src={assets.check_icon || assets.star}
-                    alt="check"
-                    className="w-4 h-4 mt-1 flex-shrink-0"
-                  />
-                  <p className="text-sm text-gray-600">
-                    Master the fundamentals and advanced concepts
-                  </p>
-                </div>
-                <div className="flex items-start gap-2">
-                  <img
-                    src={assets.check_icon || assets.star}
-                    alt="check"
-                    className="w-4 h-4 mt-1 flex-shrink-0"
-                  />
-                  <p className="text-sm text-gray-600">
-                    Hands-on practical projects and exercises
-                  </p>
-                </div>
-                <div className="flex items-start gap-2">
-                  <img
-                    src={assets.check_icon || assets.star}
-                    alt="check"
-                    className="w-4 h-4 mt-1 flex-shrink-0"
-                  />
-                  <p className="text-sm text-gray-600">
-                    Industry best practices and real-world applications
-                  </p>
-                </div>
-                <div className="flex items-start gap-2">
-                  <img
-                    src={assets.check_icon || assets.star}
-                    alt="check"
-                    className="w-4 h-4 mt-1 flex-shrink-0"
-                  />
-                  <p className="text-sm text-gray-600">
-                    Certificate of completion upon finishing
-                  </p>
-                </div>
+                {[
+                  "Master the fundamentals and advanced concepts",
+                  "Hands-on practical projects and exercises",
+                  "Industry best practices and real-world applications",
+                  "Certificate of completion upon finishing",
+                ].map((item, idx) => (
+                  <div key={idx} className="flex items-start gap-2">
+                    <img
+                      src={assets.check_icon || assets.star}
+                      alt="check"
+                      className="w-4 h-4 mt-1 flex-shrink-0"
+                    />
+                    <p className="text-sm text-gray-600">{item}</p>
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* Course requirements */}
+            {/* Requirements */}
             <div className="mt-8">
               <h4 className="text-lg font-semibold mb-4 text-gray-900">
                 Requirements
               </h4>
               <ul className="space-y-2">
-                <li className="flex items-start gap-2">
-                  <span className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0"></span>
-                  <p className="text-sm text-gray-600">
-                    Basic computer knowledge and internet access
-                  </p>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0"></span>
-                  <p className="text-sm text-gray-600">
-                    Willingness to learn and practice regularly
-                  </p>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0"></span>
-                  <p className="text-sm text-gray-600">
-                    No prior experience required - beginner friendly
-                  </p>
-                </li>
+                {[
+                  "Basic computer knowledge and internet access",
+                  "Willingness to learn and practice regularly",
+                  "No prior experience required - beginner friendly",
+                ].map((req, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <span className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0"></span>
+                    <p className="text-sm text-gray-600">{req}</p>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
         </div>
 
-        {/* right column */}
+        {/* RIGHT COLUMN (COURSE CARD) */}
         <div className="max-w-course-card z-10 shadow-custom-card rounded-t md:rounded-none overflow-hidden bg-white min-w-[300px] sm:min-w-[420px]">
-          <img src={courseData.courseThumbnail} alt="" />
+          {playerData ? (
+            <Youtube
+              videoId={playerData.videoId}
+              opts={{ playerVars: { autoplay: 1 } }}
+              iframeClassName="w-full aspect-video"
+            />
+          ) : (
+            <img src={courseData.courseThumbnail} alt="" className="w-full" />
+          )}
+
           <div className="p-5">
             <div className="flex items-center gap-2">
               <img
                 className="w-3.5"
                 src={assets.time_left_clock_icon}
-                alt="time left clock icon"
+                alt="time left clock"
               />
               <p className="text-red-500">
                 <span className="font-medium">5 days</span> left at this price!
               </p>
             </div>
+
             <div className="flex gap-3 items-center pt-2">
               <p className="text-gray-800 md:text-4xl text-2xl font-semibold">
                 ₹
@@ -357,16 +344,17 @@ const CourseDetails = () => {
               </p>
               <p className="md:text-lg text-gray-500">{discount}% off</p>
             </div>
+
             <div className="flex items-center text-sm md:text-base gap-4 pt-2 md:pt-4 text-gray-500">
               <div className="flex items-center gap-1">
-                <img src={assets.star} alt="star icon" className="w-4 h-4" />
+                <img src={assets.star} alt="star" className="w-4 h-4" />
                 <p>{calculateRating(courseData)}</p>
               </div>
               <div className="h-4 w-px bg-gray-500/40"></div>
               <div className="flex items-center gap-1">
                 <img
                   src={assets.time_left_clock_icon}
-                  alt="clock icon"
+                  alt="clock"
                   className="w-4 h-4"
                 />
                 <p>{calculateCourseDuration(courseData)}</p>
@@ -375,15 +363,33 @@ const CourseDetails = () => {
               <div className="flex items-center gap-1">
                 <img
                   src={assets.play_icon}
-                  alt="lessons icon"
+                  alt="lessons"
                   className="w-4 h-4"
                 />
                 <p>{calculateNoOfLectures(courseData)} lessons</p>
               </div>
             </div>
+
+            <button className="md:mt-6 mt-4 w-full py-3 rounded bg-blue-600 text-white font-medium">
+              {isAlreadyEnrolled ? "Already Enrolled" : "Enroll Now"}
+            </button>
+
+            <div className="pt-6">
+              <p className="md:text-xl text-lg font-medium text-gray-800">
+                What's in the course?
+              </p>
+              <ul className="ml-4 pt-2 text-sm md:text-default list-disc text-gray-500">
+                <li>Life-time access with free updates</li>
+                <li>Step-by-step, hands-on project guidance</li>
+                <li>Downloadable resources and source code</li>
+                <li>Quizzes to test your knowledge</li>
+                <li>Certificate of completion</li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 };
