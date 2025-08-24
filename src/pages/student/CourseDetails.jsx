@@ -15,7 +15,8 @@ const CourseDetails = () => {
     calculateRating,
     calculateNoOfLectures,
     calculateCourseDuration,
-    calculateChapterTime
+    calculateChapterTime,
+    currency
   } = useContext(AppContext)
 
   useEffect(() => {
@@ -53,6 +54,11 @@ const CourseDetails = () => {
     : typeof courseData.enrolledStudents === 'number'
       ? courseData.enrolledStudents
       : 0;
+
+  // Currency conversion from USD to INR (1 USD = 83 INR approximately)
+  const USD_TO_INR = 83;
+  const convertedOriginalPrice = courseData.coursePrice * USD_TO_INR;
+  const convertedDiscountedPrice = convertedOriginalPrice - (courseData.discount * convertedOriginalPrice / 100);
 
   return (
     <>
@@ -126,7 +132,7 @@ const CourseDetails = () => {
             )}
           </div>
 
-          <p className="text-sm">Course by <span className="text-blue-600 underline">EduLearn</span></p>
+          <p className="text-sm">Course by <span className="text-blue-600 underline">EduLearn Pro</span></p>
 
           <div className="pt-8 text-gray-800">
             <h2 className="text-xl font-semibold">Course Structure</h2>
@@ -179,7 +185,101 @@ const CourseDetails = () => {
               ))}
             </div>
           </div>
+          
+          <div className="py-20 text-sm md:text-base">
+            <h3 className="text-xl font-semibold mb-6 text-gray-900">Course Description</h3>
+            <div className="bg-gray-50 rounded-lg p-6 border-l-4 border-blue-500">
+              <div className="prose prose-gray max-w-none">
+                <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+                  {courseData.courseDescription.replace(/<[^>]*>/g, '').trim()}
+                </p>
+              </div>
+            </div>
+            
+            {/* What you'll learn section */}
+            <div className="mt-8">
+              <h4 className="text-lg font-semibold mb-4 text-gray-900">What you'll learn</h4>
+              <div className="grid md:grid-cols-2 gap-3">
+                <div className="flex items-start gap-2">
+                  <img src={assets.check_icon || assets.star} alt="check" className="w-4 h-4 mt-1 flex-shrink-0" />
+                  <p className="text-sm text-gray-600">Master the fundamentals and advanced concepts</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <img src={assets.check_icon || assets.star} alt="check" className="w-4 h-4 mt-1 flex-shrink-0" />
+                  <p className="text-sm text-gray-600">Hands-on practical projects and exercises</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <img src={assets.check_icon || assets.star} alt="check" className="w-4 h-4 mt-1 flex-shrink-0" />
+                  <p className="text-sm text-gray-600">Industry best practices and real-world applications</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <img src={assets.check_icon || assets.star} alt="check" className="w-4 h-4 mt-1 flex-shrink-0" />
+                  <p className="text-sm text-gray-600">Certificate of completion upon finishing</p>
+                </div>
+              </div>
+            </div>
 
+            {/* Course requirements */}
+            <div className="mt-8">
+              <h4 className="text-lg font-semibold mb-4 text-gray-900">Requirements</h4>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0"></span>
+                  <p className="text-sm text-gray-600">Basic computer knowledge and internet access</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0"></span>
+                  <p className="text-sm text-gray-600">Willingness to learn and practice regularly</p>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-2 flex-shrink-0"></span>
+                  <p className="text-sm text-gray-600">No prior experience required - beginner friendly</p>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        {/* right column */}
+        <div className="max-w-course-card z-10 shadow-custom-card rounded-t md:rounded-none overflow-hidden bg-white min-w-[300px] sm:min-w-[420px]">
+          <img src={courseData.courseThumbnail} alt="" />
+          <div className="p-5">
+            <div className="flex items-center gap-2">
+              <img className="w-3.5" src={assets.time_left_clock_icon} alt="time left clock icon" />
+              <p className="text-red-500"><span className="font-medium">5 days</span> left at this price!</p>
+            </div>
+            <div className="flex gap-3 items-center pt-2">
+              <p className="text-gray-800 md:text-4xl text-2xl font-semibold">
+                ₹{convertedDiscountedPrice.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </p>
+              <p className="md:text-lg text-gray-500 line-through">₹{convertedOriginalPrice.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+              <p className="md:text-lg text-gray-500">
+                {courseData.discount}% off
+              </p>
+            </div>
+            <div className="flex items-center text-sm md:text-base gap-4 pt-2 md:pt-4 text-gray-500">
+              <div className="flex items-center gap-1">
+                <img src={assets.star} alt="star icon" className="w-4 h-4" />
+                <p>
+                  {calculateRating(courseData)}
+                </p>
+              </div>
+              <div className="h-4 w-px bg-gray-500/40"></div>
+              <div className="flex items-center gap-1">
+                <img src={assets.time_left_clock_icon} alt="clock icon" className="w-4 h-4" />
+                <p>
+                  {calculateCourseDuration(courseData)}
+                </p>
+              </div>
+              <div className="h-4 w-px bg-gray-500/40"></div>
+              <div className="flex items-center gap-1">
+                <img src={assets.play_icon} alt="lessons icon" className="w-4 h-4" />
+                <p>
+                  {calculateNoOfLectures(courseData)} lessons
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </>
