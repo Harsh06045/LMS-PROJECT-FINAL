@@ -10,6 +10,7 @@ import Loading from "../../components/student/Loading";
 import { assets } from "../../assets/assets";
 import YouTube from "react-youtube";
 import Footer from "../../components/student/Footer";
+import { Rating } from "react-simple-star-rating";
 
 /* Helper: extract YouTube videoId from any youtube URL */
 const getYouTubeId = (url = "") => {
@@ -179,6 +180,7 @@ const Player = () => {
 
           <div className="flex items-center gap-2 py-3 mt-10">
             <h1 className="text-xl font-bold">Rate this course : </h1>
+            <Rating initialRating={0}/>
           </div>
         </div>
 
