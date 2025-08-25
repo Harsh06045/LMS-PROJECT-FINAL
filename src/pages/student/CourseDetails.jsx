@@ -30,6 +30,24 @@ const getYoutubeId = (url = '') => {
 };
 
 /* -------------------------------------------------------------------------- */
+/*  Inline green-check icon (never 404s)                                      */
+/* -------------------------------------------------------------------------- */
+const Check = ({ className = 'h-4 w-4 mt-[2px] shrink-0 text-green-600' }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 20 20"
+    fill="currentColor"
+    className={className}
+  >
+    <path
+      fillRule="evenodd"
+      d="M16.707 5.293a1 1 0 0 1 0 1.414l-8.25 8.25a1 1 0 0 1-1.414 0l-4.25-4.25a1 1 0 1 1 1.414-1.414l3.543 3.543 7.543-7.543a1 1 0 0 1 1.414 0z"
+      clipRule="evenodd"
+    />
+  </svg>
+);
+
+/* -------------------------------------------------------------------------- */
 /*  Component                                                                 */
 /* -------------------------------------------------------------------------- */
 const CourseDetails = () => {
@@ -109,6 +127,7 @@ const CourseDetails = () => {
       <div className="relative flex min-h-screen flex-col gap-10 bg-white px-8 pt-20 text-black md:flex-row md:px-36 md:pt-32">
         <div className="absolute inset-0 -z-10 h-[340px] bg-gradient-to-b from-cyan-100/70" />
 
+        {/* ──────────────────────── LEFT COLUMN ───────────────────────── */}
         <div className="max-w-xl">
           {/* heading */}
           <h1 className="relative inline-block text-xl font-semibold text-black opacity-0 translate-y-3 animate-[fadeUp_500ms_ease-out_100ms_forwards] md:text-4xl after:absolute after:inset-0 after:-translate-x-full after:bg-[linear-gradient(110deg,transparent,rgba(255,255,255,0.8),transparent)] after:content-[''] after:animate-[shine_900ms_ease-out_300ms_forwards]">
@@ -171,7 +190,7 @@ const CourseDetails = () => {
             Course by <span className="underline text-blue-600">EduLearn Pro</span>
           </p>
 
-          {/* Course Structure */}
+          {/* ───────────────────── Course Structure ───────────────────── */}
           <div className="pt-8 text-gray-800">
             <h2 className="text-xl font-semibold">Course Structure</h2>
             <div className="pt-5">
@@ -254,18 +273,29 @@ const CourseDetails = () => {
             </div>
           </div>
 
-          {/* Description / Learn / Req */}
+          {/* ─── Description / Learn / Requirements ─── */}
           <div className="py-20 text-sm md:text-base">
             <h3 className="mb-6 text-xl font-semibold text-gray-900">
               Course Description
             </h3>
-            <div className="rounded-lg border-l-4 border-blue-500 bg-gray-50 p-6">
-              <div
-                className="prose prose-sm md:prose-base max-w-none text-gray-700"
+
+            {/* stylised description card */}
+            <div className="relative overflow-hidden rounded-xl bg-white/60 p-8 shadow-lg ring-1 ring-gray-900/5">
+              <span className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-blue-50 via-transparent to-purple-50" />
+              <article
+                className="
+                  prose prose-slate lg:prose-lg
+                  prose-headings:font-semibold
+                  prose-a:text-blue-600 prose-a:underline-offset-2
+                  prose-code:bg-gray-100 prose-code:rounded prose-code:px-1
+                  prose-li:marker:text-blue-600
+                  max-w-none leading-7
+                "
                 dangerouslySetInnerHTML={{ __html: derived.description }}
               />
             </div>
 
+            {/*  What you'll learn  */}
             <div className="mt-8">
               <h4 className="mb-4 text-lg font-semibold text-gray-900">
                 What you'll learn
@@ -278,17 +308,14 @@ const CourseDetails = () => {
                   'Certificate of completion upon finishing',
                 ].map((item) => (
                   <div key={item} className="flex items-start gap-2">
-                    <img
-                      src={assets.check_icon}
-                      alt="check"
-                      className="h-4 w-4 flex-shrink-0 mt-[2px]"
-                    />
+                    <Check />  {/* inline SVG icon */}
                     <p className="text-sm text-gray-600">{item}</p>
                   </div>
                 ))}
               </div>
             </div>
 
+            {/*  Requirements  */}
             <div className="mt-8">
               <h4 className="mb-4 text-lg font-semibold text-gray-900">
                 Requirements
@@ -309,6 +336,7 @@ const CourseDetails = () => {
           </div>
         </div>
 
+        {/* ──────────────────────── RIGHT SIDEBAR ─────────────────────── */}
         <div className="z-10 w-full max-w-sm overflow-hidden rounded-t bg-white shadow-custom-card">
           {playerId ? (
             <YouTube
