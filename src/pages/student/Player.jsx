@@ -1,14 +1,29 @@
 /* -------------------------------------------------------------------------- */
 /*  Player.jsx                                                                */
 /* -------------------------------------------------------------------------- */
-import React, { useContext, useEffect, useState, Fragment } from 'react';
-import { useParams } from 'react-router-dom';
-import humanizeDuration from 'humanize-duration';
+import React, { useContext, useEffect, useState, Fragment } from "react";
+import { useParams } from "react-router-dom";
+import humanizeDuration from "humanize-duration";
 
-import { AppContext } from '../../context/AppContext';
-import Loading from '../../components/student/Loading';
-import { assets } from '../../assets/assets';
-import YouTube from 'react-youtube';
+import { AppContext } from "../../context/AppContext";
+import Loading from "../../components/student/Loading";
+import { assets } from "../../assets/assets";
+import YouTube from "react-youtube";
+import Footer from "../../components/student/Footer";
+
+/* Helper: extract YouTube videoId from any youtube URL */
+const getYouTubeId = (url = "") => {
+  try {
+    const u = new URL(url);
+    if (u.hostname === "youtu.be") return u.pathname.slice(1);
+    if (u.hostname.includes("youtube.com")) {
+      return u.searchParams.get("v") || "";
+    }
+  } catch {
+    return "";
+  }
+  return "";
+};
 
 const Player = () => {
   /* ---------------------------------------------------------------------- */
@@ -23,20 +38,29 @@ const Player = () => {
   const [courseData, setCourseData] = useState(null);
   const [openSections, setOpenSections] = useState({});
   const [playerData, setPlayerData] = useState(null); // holds current lecture meta
+  const [completedLectures, setCompletedLectures] = useState({}); // track completion
 
   /* ---------------------------------------------------------------------- */
   /*  Fetch the matching course once on mount                               */
   /* ---------------------------------------------------------------------- */
   useEffect(() => {
-    const match = enrolledCourses.find((c) => String(c._id) === String(courseId));
+    const match = enrolledCourses.find(
+      (c) => String(c._id) === String(courseId)
+    );
     setCourseData(match ?? null);
   }, [enrolledCourses, courseId]);
 
   /* ---------------------------------------------------------------------- */
   /*  UI helpers                                                            */
   /* ---------------------------------------------------------------------- */
-  const toggleSection = (i) =>
-    setOpenSections((s) => ({ ...s, [i]: !s[i] }));
+  const toggleSection = (i) => setOpenSections((s) => ({ ...s, [i]: !s[i] }));
+
+  const markComplete = (chapterIdx, lectureIdx) => {
+    setCompletedLectures((prev) => ({
+      ...prev,
+      [`${chapterIdx}-${lectureIdx}`]: true,
+    }));
+  };
 
   /* ---------------------------------------------------------------------- */
   /*  Guard while data is loading                                           */
@@ -70,7 +94,7 @@ const Player = () => {
                       src={assets.down_arrow_icon}
                       alt=""
                       className={`h-4 w-4 transition-transform ${
-                        openSections[idx] ? 'rotate-180' : ''
+                        openSections[idx] ? "rotate-180" : ""
                       }`}
                     />
                     <p className="text-sm font-medium md:text-base">
@@ -78,91 +102,125 @@ const Player = () => {
                     </p>
                   </div>
                   <p className="text-sm text-gray-600">
-                    {(chapter.chapterContent?.length ?? 0)} lectures •{' '}
-                    {calculateChapterTime(chapter)}
+                    {chapter.chapterContent?.length ?? 0} lectures •{" "}
+                    {calculateChapterTime?.(chapter)}
                   </p>
                 </button>
 
                 {/* lecture list */}
                 <div
                   className={`overflow-hidden transition-all duration-300 ${
-                    openSections[idx] ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
+                    openSections[idx]
+                      ? "max-h-screen opacity-100"
+                      : "max-h-0 opacity-0"
                   }`}
                 >
                   <ul className="border-t border-gray-300 bg-gray-50 py-2 pr-4 list-none pl-4 md:pl-10 text-gray-600">
-                    {chapter.chapterContent?.map((lecture, li) => (
-                      <li
-                        key={lecture._id ?? li}
-                        className="flex items-start gap-2 rounded px-2 py-2 hover:bg-gray-100"
-                      >
-                        <img
-                          src={lecture.watched ? assets.blue_tick_icon : assets.play_icon}
-                          alt=""
-                          className="h-4 w-4 flex-shrink-0 mt-0.5"
-                        />
+                    {chapter.chapterContent?.map((lecture, li) => {
+                      const key = `${idx}-${li}`;
+                      const isCompleted =
+                        completedLectures[key] || lecture.watched;
 
-                        <div className="flex w-full items-center justify-between text-xs text-gray-800 md:text-sm">
-                          <p className="flex-1">{lecture.lectureTitle}</p>
+                      return (
+                        <li
+                          key={lecture._id ?? li}
+                          className="flex items-start gap-2 rounded px-2 py-2 hover:bg-gray-100"
+                        >
+                          <img
+                            src={
+                              isCompleted
+                                ? assets.blue_tick_icon
+                                : assets.play_icon
+                            }
+                            alt=""
+                            className="h-4 w-4 flex-shrink-0 mt-0.5"
+                          />
 
-                          <div className="ml-2 flex flex-shrink-0 items-center gap-3">
-                            {lecture.lectureUrl && (
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  setPlayerData({
-                                    ...lecture,
-                                    chapter: idx + 1,
-                                    lecture: li + 1,
-                                  })
-                                }
-                                className="text-blue-500 transition-colors hover:text-blue-600"
-                              >
-                                Watch
-                              </button>
-                            )}
+                          <div className="flex w-full items-center justify-between text-xs text-gray-800 md:text-sm">
+                            <p className="flex-1">{lecture.lectureTitle}</p>
 
-                            <p className="font-medium text-gray-500">
-                              {humanizeDuration(
-                                Number(lecture.lectureDuration || 0) * 60 * 1000,
-                                { units: ['h', 'm'], round: true }
+                            <div className="ml-2 flex flex-shrink-0 items-center gap-3">
+                              {lecture.lectureUrl && (
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setPlayerData({
+                                      ...lecture,
+                                      chapter: idx + 1,
+                                      lecture: li + 1,
+                                      chapterIdx: idx,
+                                      lectureIdx: li,
+                                    })
+                                  }
+                                  className="text-blue-500 transition-colors hover:text-blue-600"
+                                >
+                                  Watch
+                                </button>
                               )}
-                            </p>
+
+                              <p className="font-medium text-gray-500">
+                                {humanizeDuration(
+                                  Number(lecture?.lectureDuration || 0) *
+                                    60 *
+                                    1000,
+                                  { units: ["h", "m"], round: true }
+                                )}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                      </li>
-                    ))}
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
               </div>
             ))}
           </div>
+
+          <div className="flex items-center gap-2 py-3 mt-10">
+            <h1 className="text-xl font-bold">Rate this course : </h1>
+          </div>
         </div>
 
         {/* RIGHT column – video player */}
-        <div>
+        <div className="md:mt-10">
           {playerData ? (
             <div>
               <YouTube
-                videoId={playerData.lectureUrl.split('/').pop()}
+                videoId={getYouTubeId(playerData.lectureUrl)}
                 iframeClassName="aspect-video w-full"
               />
 
               {/* current lecture meta */}
-              <p>
-                {playerData.chapter}.{playerData.lecture} {playerData.lectureTitle}
-              </p>
-
-              <button>Mark Complete</button>
+              <div className="flex justify-between items-center mt-1">
+                <p>
+                  {playerData.chapter}.{playerData.lecture}{" "}
+                  {playerData.lectureTitle}
+                </p>
+                <button
+                  onClick={() =>
+                    markComplete(playerData.chapterIdx, playerData.lectureIdx)
+                  }
+                  className="text-blue-600 hover:text-blue-700"
+                >
+                  {completedLectures[
+                    `${playerData.chapterIdx}-${playerData.lectureIdx}`
+                  ]
+                    ? "Completed"
+                    : "Mark Complete"}
+                </button>
+              </div>
             </div>
           ) : (
             <img
-              src={courseData ? courseData.courseThumbnail : ''}
+              src={courseData?.courseThumbnail || ""}
               alt="course thumbnail"
               className="aspect-video w-full object-cover"
             />
           )}
         </div>
       </div>
+      <Footer />
     </Fragment>
   );
 };

@@ -3,7 +3,14 @@ import React from 'react'
 const Rating = () => {
   return (
     <div>
-        <h1>Rating</h1>
+        {Array.from({length: 5}, (_ ,  index)=>{
+          const starValue = index + 1;
+          return (
+            <span Key={index} className={``}>
+
+            </span>
+          )
+        })}
     </div>
   )
 }
