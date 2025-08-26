@@ -18,6 +18,7 @@ import StudentEnroll from './pages/educator/StudentEnroll';
 
 // Components
 import Navbar from './components/student/Navbar';
+import 'quill/dist/quill.snow.css';
 
 const App = () => {
   // Conditionally render Navbar: don't show it on educator routes
