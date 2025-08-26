@@ -1,76 +1,61 @@
-/* -------------------------------------------------------------------------- */
-/*  Player.jsx                                                                */
-/* -------------------------------------------------------------------------- */
 import React, { useContext, useEffect, useState, Fragment } from "react";
 import { useParams } from "react-router-dom";
 import humanizeDuration from "humanize-duration";
-
 import { AppContext } from "../../context/AppContext";
 import Loading from "../../components/student/Loading";
 import { assets } from "../../assets/assets";
 import YouTube from "react-youtube";
 import Footer from "../../components/student/Footer";
-import { Rating } from "react-simple-star-rating";
+import Rating from "../../components/student/Rating";
 
-/* Helper: extract YouTube videoId from any youtube URL */
+// Helper: Extract YouTube videoId from any YouTube URL
 const getYouTubeId = (url = "") => {
   try {
     const u = new URL(url);
+    // Handle different YouTube URL formats
     if (u.hostname === "youtu.be") return u.pathname.slice(1);
     if (u.hostname.includes("youtube.com")) {
       return u.searchParams.get("v") || "";
     }
   } catch {
-    return "";
+    return ""; // Return empty string if URL is invalid
   }
   return "";
 };
 
 const Player = () => {
-  /* ---------------------------------------------------------------------- */
-  /*  Context & route params                                                */
-  /* ---------------------------------------------------------------------- */
+  // Context & route params
   const { enrolledCourses = [], calculateChapterTime } = useContext(AppContext);
   const { courseId } = useParams();
 
-  /* ---------------------------------------------------------------------- */
-  /*  Local state                                                           */
-  /* ---------------------------------------------------------------------- */
-  const [courseData, setCourseData] = useState(null);
-  const [openSections, setOpenSections] = useState({});
-  const [playerData, setPlayerData] = useState(null); // holds current lecture meta
-  const [completedLectures, setCompletedLectures] = useState({}); // track completion
+  // Local state
+  const [courseData, setCourseData] = useState(null); // Holds the course data
+  const [openSections, setOpenSections] = useState({}); // Track open/closed sections
+  const [playerData, setPlayerData] = useState(null); // Holds current lecture metadata
+  const [completedLectures, setCompletedLectures] = useState({}); // Track completion of lectures
 
-  /* ---------------------------------------------------------------------- */
-  /*  Fetch the matching course once on mount                               */
-  /* ---------------------------------------------------------------------- */
+  // Fetch the matching course once on mount
   useEffect(() => {
     const match = enrolledCourses.find(
       (c) => String(c._id) === String(courseId)
     );
-    setCourseData(match ?? null);
+    setCourseData(match ?? null); // Set course data or null if not found
   }, [enrolledCourses, courseId]);
 
-  /* ---------------------------------------------------------------------- */
-  /*  UI helpers                                                            */
-  /* ---------------------------------------------------------------------- */
-  const toggleSection = (i) => setOpenSections((s) => ({ ...s, [i]: !s[i] }));
+  // UI helpers
+  const toggleSection = (i) => setOpenSections((s) => ({ ...s, [i]: !s[i] })); // Toggle section visibility
 
   const markComplete = (chapterIdx, lectureIdx) => {
     setCompletedLectures((prev) => ({
       ...prev,
-      [`${chapterIdx}-${lectureIdx}`]: true,
+      [`${chapterIdx}-${lectureIdx}`]: true, // Mark lecture as completed
     }));
   };
 
-  /* ---------------------------------------------------------------------- */
-  /*  Guard while data is loading                                           */
-  /* ---------------------------------------------------------------------- */
-  if (!courseData) return <Loading />;
+  // Guard while data is loading
+  if (!courseData) return <Loading />; // Show loading state if course data is not available
 
-  /* ====================================================================== */
-  /*  Render                                                                */
-  /* ====================================================================== */
+  // Render
   return (
     <Fragment>
       <div className="p-4 sm:p-10 flex flex-col-reverse md:grid md:grid-cols-2 gap-10 md:px-36">
@@ -84,10 +69,10 @@ const Player = () => {
                 key={chapter._id ?? idx}
                 className="mb-2 rounded border border-gray-300 bg-white"
               >
-                {/* chapter header */}
+                {/* Chapter header */}
                 <button
                   type="button"
-                  onClick={() => toggleSection(idx)}
+                  onClick={() => toggleSection(idx)} // Toggle chapter section
                   className="flex w-full items-center justify-between px-4 py-3 transition-colors hover:bg-gray-50"
                 >
                   <div className="flex items-center gap-2">
@@ -104,11 +89,11 @@ const Player = () => {
                   </div>
                   <p className="text-sm text-gray-600">
                     {chapter.chapterContent?.length ?? 0} lectures •{" "}
-                    {calculateChapterTime?.(chapter)}
+                    {calculateChapterTime?.(chapter)} {/* Display chapter time */}
                   </p>
                 </button>
 
-                {/* lecture list */}
+                {/* Lecture list */}
                 <div
                   className={`overflow-hidden transition-all duration-300 ${
                     openSections[idx]
@@ -120,7 +105,7 @@ const Player = () => {
                     {chapter.chapterContent?.map((lecture, li) => {
                       const key = `${idx}-${li}`;
                       const isCompleted =
-                        completedLectures[key] || lecture.watched;
+                        completedLectures[key] || lecture.watched; // Check if lecture is completed
 
                       return (
                         <li
@@ -151,7 +136,7 @@ const Player = () => {
                                       lecture: li + 1,
                                       chapterIdx: idx,
                                       lectureIdx: li,
-                                    })
+                                    }) // Set player data for the selected lecture
                                   }
                                   className="text-blue-500 transition-colors hover:text-blue-600"
                                 >
@@ -178,9 +163,13 @@ const Player = () => {
             ))}
           </div>
 
-          <div className="flex items-center gap-2 py-3 mt-10">
-            <h1 className="text-xl font-bold">Rate this course : </h1>
-            <Rating initialRating={0}/>
+          {/* Rating Section */}
+          <div className="flex items-center gap-3 py-3 mt-10">
+            <h1 className="text-xl font-bold">Rate this course :</h1>
+            <Rating
+              initialRating={0}
+              onRate={(value) => console.log('rating', value)} // Handle rating click
+            />
           </div>
         </div>
 
@@ -189,11 +178,11 @@ const Player = () => {
           {playerData ? (
             <div>
               <YouTube
-                videoId={getYouTubeId(playerData.lectureUrl)}
+                videoId={getYouTubeId(playerData.lectureUrl)} // Get YouTube video ID
                 iframeClassName="aspect-video w-full"
               />
 
-              {/* current lecture meta */}
+              {/* Current lecture metadata */}
               <div className="flex justify-between items-center mt-1">
                 <p>
                   {playerData.chapter}.{playerData.lecture}{" "}
@@ -201,7 +190,7 @@ const Player = () => {
                 </p>
                 <button
                   onClick={() =>
-                    markComplete(playerData.chapterIdx, playerData.lectureIdx)
+                    markComplete(playerData.chapterIdx, playerData.lectureIdx) // Mark lecture as complete
                   }
                   className="text-blue-600 hover:text-blue-700"
                 >
