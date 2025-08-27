@@ -11,8 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@clerk/express": "^1.7.25",
-    "@clerk/nextjs": "^6.31.5",
+    "@clerk/express": "^1.7.24",
     "cloudinary": "^2.7.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",

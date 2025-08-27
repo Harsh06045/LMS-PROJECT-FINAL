@@ -1,3 +1,4 @@
+
 import { clerkClient } from '@clerk/nextjs';
 
 // Update role to educator
