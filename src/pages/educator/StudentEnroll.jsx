@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'; 
-import { dummyStudentEnrolled } from '../../assets/assets';
+import { assets, dummyStudentEnrolled } from '../../assets/assets';
 import Loading from '../../components/student/Loading';
+
 
 const StudentEnroll = () => {
   const [enrolledStudents, setEnrolledStudents] = useState(null);
@@ -31,11 +32,11 @@ const StudentEnroll = () => {
                 <td className='px-4 py-3 text-center hidden sm:table-cell'>{index + 1}</td>
                 <td className='md:px-4 px-2 py-3 flex items-center space-x-3'>
                   <img
-                    src={item.student.imageUrl}
+                    src={assets.logo}
                     alt=''
                     className='w-9 h-9 rounded-full'
                   />
-                  <span className='truncate'>{item.student.name}</span>
+                  <span className='truncate'>EduLearn Pro</span>
                 </td>
                 <td className='px-4 py-3 truncate'>{item.courseTitle}</td>
                 <td className='px-4 py-3 hidden sm:table-cell'>
