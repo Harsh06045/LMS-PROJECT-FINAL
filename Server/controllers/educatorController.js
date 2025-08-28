@@ -1,12 +1,12 @@
 
-import { clerkClient } from '@clerk/nextjs';
+import { clerkClient } from '@clerk/express';
 
 // Update role to educator
 export const updateRoleToEducator = async (req, res) => {
   try {
     const userId = req.auth.userId;
 
-    await clerkClient.users.updateUser(userId, {
+    await clerkClient.users.updateUserMetadata(userId, {
       publicMetadata: {
         role: 'educator',
       },
