@@ -1,16 +1,10 @@
 import express from 'express';
-import { updateRoleToEducator, addCourse } from '../controllers/educatorController.js';
-import multer from 'multer';
+import { updateRoleToEducator } from '../controllers/educatorController.js';
 
 const educatorRouter = express.Router();
 
-// Configure multer for file uploads
-const upload = multer({ dest: 'uploads/' });
-
 // Add Educator Role route handler
+// Ensure the handler supports req, res params and handles errors
 educatorRouter.get('/update-role', updateRoleToEducator);
-
-// Add Course route handler
-educatorRouter.post('/add-course', upload.single('thumbnail'), addCourse);
 
 export default educatorRouter;
