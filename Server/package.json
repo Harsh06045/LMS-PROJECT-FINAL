@@ -165,5 +165,6 @@
   "author": "",
   "license": "ISC",
   "type": "module",
+  "devDependencies": {},
   "description": ""
 }
