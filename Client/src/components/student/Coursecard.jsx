@@ -36,11 +36,11 @@ const Coursecard = ({ course }) => {
   return (
     <Link 
       to={'/course/' + course._id} 
-      onClick={() => scrollTo(0, 0)} 
+      onClick={() => window.scrollTo(0, 0)} // Explicitly call window.scrollTo
       className="border rounded-lg overflow-hidden shadow-sm pb-6 transition-colors duration-300
                  bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
     >
-      <img className="w-full" src={course.courseThumbnail} alt="" />
+      <img className="w-full" src={course.courseThumbnail} alt={course.courseTitle} /> {/* Added alt text */}
       <div className="p-3 text-left">
         <h3 className="text-base font-semibold text-gray-800 dark:text-white">{course.courseTitle}</h3>
         
@@ -54,7 +54,7 @@ const Coursecard = ({ course }) => {
               <img
                 key={index}
                 src={index < Math.floor(rating) ? assets.star : assets.star_blank}
-                alt=""
+                alt="rating star" // Added alt text
                 className="w-3.5 h-3.5"
               />
             ))}

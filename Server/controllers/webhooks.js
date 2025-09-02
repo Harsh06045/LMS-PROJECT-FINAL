@@ -6,15 +6,17 @@ import User from "../models/User.js";
 export const clerkWebhooks = async (req, res) => {
     try {
         const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
-        // Use raw body for verification
-        whook.verify(req.body, {
+        const payloadString = req.body.toString();
+
+        // Use the stringified payload for verification
+        whook.verify(payloadString, {
             "svix-id": req.headers["svix-id"],
             "svix-timestamp": req.headers["svix-timestamp"],
             "svix-signature": req.headers["svix-signature"],
         });
 
-        // Parse the raw body
-        const { data, type } = JSON.parse(req.body);
+        // Parse the stringified payload
+        const { data, type } = JSON.parse(payloadString);
 
         switch (type) {
             case 'user.created': {
@@ -25,7 +27,6 @@ export const clerkWebhooks = async (req, res) => {
                     imageUrl: data.image_url,
                 };
                 await User.create(userData);
-                res.json({});
                 break;
             }
             case 'user.updated': {
@@ -35,19 +36,20 @@ export const clerkWebhooks = async (req, res) => {
                     imageUrl: data.image_url,
                 };
                 await User.findByIdAndUpdate(data.id, userData);
-                res.json({});
                 break;
             }
             case 'user.deleted': {
                 await User.findByIdAndDelete(data.id);
-                res.json({});
                 break;
             }
             default:
-                res.json({});
                 break;
         }
+        // Send a 200 OK response to acknowledge receipt of the webhook
+        res.status(200).json({ success: true, message: 'Webhook processed' });
+
     } catch (error) {
-        res.json({ success: false, message: error.message });
+        console.error("Error processing Clerk webhook:", error.message);
+        res.status(400).json({ success: false, message: error.message });
     }
 }

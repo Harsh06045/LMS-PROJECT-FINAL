@@ -1,11 +1,12 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useUser, UserButton } from '@clerk/clerk-react';
+import { useUser, UserButton, useClerk } from '@clerk/clerk-react';
 import { assets } from '../../assets/assets';
 
 const Navbar = () => {
   const location = useLocation();
   const { user } = useUser();
+  const { openSignIn } = useClerk(); // Import openSignIn from useClerk
   const isCourseListPage = location.pathname.includes('/course-list');
 
   return (
@@ -19,9 +20,16 @@ const Navbar = () => {
       </Link>
 
       <div className="flex items-center gap-5">
-        <span className="text-sm text-gray-600 dark:text-gray-300">
-          Hi! EduLearn Pro
-        </span>
+        {/* Dynamically render the user's name if available */}
+        {user ? (
+          <span className="text-sm text-gray-600 dark:text-gray-300">
+            Hi, {user.firstName}!
+          </span>
+        ) : (
+          <span className="text-sm text-gray-600 dark:text-gray-300">
+            Hi! EduLearn Pro
+          </span>
+        )}
         {user ? (
           <UserButton afterSignOutUrl="/" />
         ) : (
